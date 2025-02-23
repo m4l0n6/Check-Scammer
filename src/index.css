@@ -1,0 +1,211 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bgColor: #020617;
+  --bgColor2: rgba(18, 22, 39, 0.8);
+  --bgColor3: rgba(255, 255, 255, 0.05);
+  --bgColor4: rgba(18, 22, 39, 1);
+  --textcolor: rgba(255, 255, 255, 1);
+  --subTextColor: rgba(148, 163, 184, 1);
+  --redColor: rgba(219, 40, 40, 1);
+  --gradientColor: linear-gradient(270.33deg, #d9c4af -70.15%, #ffffff 97.57%);
+  --textBtn: rgba(9, 9, 9, 1);
+}
+
+body {
+  font-family: "Montserrat", serif;
+  background-color: var(--bgColor);
+  color: var(--textcolor);
+  font-size: 16px;
+  padding-top: 80px;
+  isolation: isolate;
+}
+body::-webkit-scrollbar {
+  @apply w-1;
+}
+body::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgb(0, 0, 0, 0.3);
+}
+body::-webkit-scrollbar-thumb {
+  background-image: var(--gradientColor);
+}
+
+.btn {
+  @apply py-3 px-5 rounded-xl text-[var(--textBtn)] border-none font-medium;
+  background-image: var(--gradientColor);
+}
+
+/* HEADER */
+.header.fixed {
+  @apply top-0 left-0 right-0 mt-0 z-20 rounded-t-none animate-fadeDown2;
+  position: fixed;
+}
+.header-menu-item {
+  @apply text-[var(--subTextColor)] font-medium hover:text-[var(--textcolor)] hover:font-semibold transition-all duration-300 ease-in-out;
+}
+
+.header-menu-item.active {
+  @apply text-[var(--textcolor)] font-semibold;
+}
+
+/* end HEADER */
+
+/* SCAMER ITEM */
+.scammer__item {
+  @apply bg-[var(--bgColor3)] p-4 rounded-2xl flex items-center gap-2 cursor-pointer relative isolate overflow-hidden;
+}
+
+.scammer__item::before {
+  content: "";
+  @apply absolute left-0 top-0 w-0 h-full bg-white opacity-10 -z-[1] transition-all;
+  duration: 400ms;
+  ease: cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.scammer__item:hover::before {
+  @apply left-auto right-0 w-full;
+}
+
+.scammer__name {
+  @apply font-semibold;
+}
+
+.scammer__date {
+  @apply text-[var(--subTextColor)];
+}
+
+/* end SCAMER ITEM */
+
+/* WARNING */
+.warning__item {
+  @apply bg-[var(--bgColor3)] rounded-2xl p-4 backdrop-blur-[70px];
+}
+
+.warning__header {
+  @apply flex items-center cursor-pointer gap-2 font-semibold;
+}
+
+.warning__header-icon {
+  @apply w-6 h-6 flex-shrink-0;
+}
+
+.warning__header-icon.active {
+  @apply transform rotate-90 transition-all duration-200 ease-in-out;
+}
+
+.warning__title {
+  @apply font-semibold;
+}
+
+.warning__content {
+  @apply ml-8 text-[var(--subTextColor)] h-0 overflow-hidden transition-all duration-200 ease-in-out;
+}
+.warning__content.active {
+  @apply mt-2 h-auto;
+}
+/* end WARNING */
+
+/* Modal */
+.modal__body::-webkit-scrollbar {
+  @apply w-1;
+}
+.modal__body::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgb(0, 0, 0, 0.3);
+}
+.modal__body::-webkit-scrollbar-thumb {
+  background-image: var(--gradientColor);
+}
+.modal__group:not(:last-child) {
+  @apply border-b border-b-[#FFFFFF1A] mb-[10px];
+}
+.modal__profile {
+  @apply flex items-center gap-2 mb-4;
+}
+
+.modal__info-name {
+  @apply font-semibold;
+}
+
+.modal__info-desc {
+  @apply text-[var(--subTextColor)];
+}
+
+.modal__detail {
+  @apply flex justify-between items-center mb-[10px];
+}
+
+.modal__detail-title {
+  @apply text-[var(--subTextColor)];
+}
+
+.modal__detail-text {
+  @apply font-medium;
+}
+.modal__preview-img img {
+  @apply w-[191px] h-[237px] object-cover rounded-lg cursor-pointer hover:opacity-50 transition-all duration-200 ease-in-out;
+}
+/* end Modal */
+
+/* Report */
+.breadcrumb__link {
+  @apply text-[var(--subTextColor)] text-sm transition-all hover:text-[var(--textColor)] ease-in duration-200;
+}
+
+.breadcrumb__link.active {
+  @apply pointer-events-none text-[var(--textColor)] font-semibold;
+}
+
+.form__group-wrap {
+  @apply flex items-center gap-4 mb-6;
+}
+
+.form__group {
+  @apply flex flex-col gap-2 flex-1;
+}
+
+.form__group-heading {
+  @apply flex justify-between;
+}
+
+.form__title {
+  @apply font-medium;
+}
+
+.form__title span {
+  @apply text-[--redColor];
+}
+
+.form__input {
+  @apply px-3 py-[10px] rounded-lg bg-[var(--bgColor3)] text-[var(--textcolor)] border-none outline-none;
+}
+.preview__img {
+  @apply w-32 h-[114px] rounded-lg overflow-hidden relative;
+}
+
+.preview__img-close {
+  @apply w-8 h-8 rounded-full bg-[rgba(0,0,0,0.5)] flex items-center justify-center absolute cursor-pointer top-1 right-1;
+}
+
+.img__preview {
+  @apply w-full h-full object-cover;
+}
+
+.radio__btn {
+  @apply w-6 h-6;
+}
+
+.error {
+  @apply text-[var(--redColor)] text-sm;
+}
+
+/* end Report */
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}
