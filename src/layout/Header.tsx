@@ -26,14 +26,14 @@ function Header() {
   }, []);
   return (
     <>
-      <header className="header fixed mt-[25px] mr-[6%] ml-[6%] bg-[var(--bgColor2)] rounded-2xl flex justify-between items-center py-4 px-10 backdrop-blur-[70px]">
+      <header className="fixed flex justify-between items-center bg-[var(--bgColor2)] backdrop-blur-[70px] mt-[25px] mr-[6%] ml-[6%] px-10 py-4 rounded-2xl header">
         <a href="" className="flex items-end gap-[6px]">
           <img src="../src/assets/img/logo.png" alt="logo" className="" />
-          <span className="text-[18px] font-bold text-[var(--textcolor)]">
+          <span className="font-bold text-[18px] text-[var(--textcolor)]">
             Check scam
           </span>
         </a>
-        <ul className="header-menu flex items-center gap-10">
+        <ul className="flex items-center gap-10 header-menu">
           <li className="header-menu-item">
             <Link to="/">Trang chủ</Link>
           </li>

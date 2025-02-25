@@ -4,6 +4,7 @@ import { validationSchema } from "../validation/validation";
 import { z } from "zod";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
+import Loading from "../components/Loading";
 
 type Validate = z.infer<typeof validationSchema>;
 
@@ -19,22 +20,29 @@ function Report() {
     user__phone: "",
     user__type: "Tôi là nạn nhân",
     images: [] as File[],
+    date: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoading, setLoading] = useState<boolean>(false);
+  const [isUpload, setIsUpload] = useState<boolean>(false);
 
   const apiKey = "b1726c7f9f4bdfee51cae420c40e33ca";
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
+      setLoading(true);
       const filesArray = Array.from(e.target.files);
       const urlsArray = await Promise.all(
         filesArray.map((file) => uploadImgBB(file))
       );
-      setImages((prev) => [...prev, ...urlsArray]);
+      const validUrls = urlsArray.filter((url) => url !== null);
+      setImages((prev) => [...prev, ...validUrls]);
       setUser((prevUser) => ({
         ...prevUser,
         images: [...prevUser.images, ...filesArray],
       }));
+      setLoading(false);
+      setIsUpload(validUrls.length > 0);
     }
   };
 
@@ -46,6 +54,13 @@ function Report() {
       ...prevUser,
       images: newFileImages,
     }));
+    if (newImages.length === 0) {
+      setIsUpload(false);
+      const fileInput = document.getElementById("images") as HTMLInputElement;
+      if (fileInput) {
+        fileInput.value = "";
+      }
+    }
   };
 
   const handleChange = (
@@ -62,15 +77,26 @@ function Report() {
     handleUpload(e);
   };
 
-  const onsSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const result = validationSchema.safeParse(user);
+
+    if (!result.success) {
+      const newErrors: Record<string, string> = {};
+      result.error.errors.forEach((error) => {
+        newErrors[error.path[0]] = error.message;
+      });
+      setErrors(newErrors);
+      toast.error("Vui lòng kiểm tra lại thông tin!");
+      return;
+    }
     const userWithImageUrls = {
       ...user,
       images: images,
+      date: new Date().toISOString(),
     };
     try {
-      axios.post(
+      await axios.post(
         "https://67a8bcd26e9548e44fc1e141.mockapi.io/scammers",
         userWithImageUrls
       );
@@ -84,19 +110,13 @@ function Report() {
         user__phone: "",
         user__type: "Tôi là nạn nhân",
         images: [] as File[],
+        date: "",
       });
       setImages([]);
       setErrors({});
-      notify();
+      toast.success("Tố cáo thành công!");
     } catch (error) {
-      const newErrors: Record<string, string> = {};
-      if (!result.success) {
-        result.error.errors.forEach((error) => {
-          newErrors[error.path[0]] = error.message;
-        });
-        setErrors(newErrors);
-      }
-      console.log(error);
+      toast.error(`Lỗi: ${error}`);
     }
   };
 
@@ -110,17 +130,21 @@ function Report() {
       );
       return res.data.data.display_url;
     } catch (err) {
-      console.log(err);
+      toast.error(`Lỗi: ${err}`);
+      return null;
     }
   };
 
-  const notify = () => toast.success("Tố cáo thành công!");
+  const handleContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    e.target.style.height = "auto";
+    e.target.style.height = e.target.scrollHeight + "px";
+  };
 
   return (
     <>
       <ToastContainer />
       {/* BREADCRUMB */}
-      <section className="flex mt-4 items-center gap-2 mx-[6%]">
+      <section className="flex items-center gap-2 mx-[6%] mt-4">
         <Link to="/" className="breadcrumb__link">
           Trang chủ
         </Link>
@@ -132,8 +156,11 @@ function Report() {
       {/* end BREADCRUMB */}
 
       {/* FORM REPORT */}
-      <form className="max-w-[830px] mx-auto mt-1 pb-20" onSubmit={onsSubmit}>
-        <h2 className="text-3xl font-extrabold text-center mb-4">
+      <form
+        className="mx-auto mt-1 pb-20 max-w-[830px]"
+        onSubmit={handleSubmit}
+      >
+        <h2 className="mb-4 font-extrabold text-3xl text-center">
           Thông tin kẻ lừa đảo
         </h2>
         {/* SCAMMER INFO */}
@@ -219,25 +246,31 @@ function Report() {
           </div>
         </div>
 
-        <div className="form__group mb-6 relative">
+        <div className="form__group relative mb-6">
+          <div className="form__group-heading">
+            <label htmlFor="bank__name" className="form__title">
+              Nội dung tối cáo <span>*</span>
+            </label>
+          </div>
           <textarea
             name="content"
             id="content"
-            className="form__input resize-none h-16 overflow-hidden"
+            className="h-16 overflow-hidden resize-none form__input"
             placeholder="Nhập nội dung tố cáo ..."
             onChange={handleChange}
+            onInput={handleContent}
             value={user.content}
           ></textarea>
           {errors.content && (
-            <p className="error absolute top-[10px] right-3">
+            <p className="top-[10px] right-3 absolute error">
               {errors.content}
             </p>
           )}
         </div>
 
-        <div className="flex items-center gap-3 flex-wrap mb-[40px]">
+        <div className="flex flex-wrap items-center gap-3 mb-[40px]">
           {images.map((image, index) => (
-            <div key={index} className="preview__img relative">
+            <div key={index} className="relative preview__img">
               <div
                 className="preview__img-close"
                 onClick={() => handleRemove(index)}
@@ -251,10 +284,10 @@ function Report() {
               <img src={image} alt="" className="img__preview" />
             </div>
           ))}
-          <div className="w-32 h-[114px] rounded-lg bg-[--bgColor3] relative">
+          <div className="relative bg-[--bgColor3] rounded-lg w-full max-w-32 h-[114px]">
             <label
               htmlFor="images"
-              className="cursor-pointer absolute top-0 left-0 right-0 bottom-0 flex flex-col items-center justify-center gap-2"
+              className="top-0 right-0 bottom-0 left-0 absolute flex flex-col justify-center items-center gap-2 cursor-pointer"
             >
               <input
                 type="file"
@@ -266,11 +299,25 @@ function Report() {
                 hidden
                 onChange={handleFileChanges}
               />
-              <img src="../src/assets/svg/image.svg" alt="" />
-              <span className="text-sm text-[#94A3B8]">Chọn ảnh</span>
+              {isLoading ? (
+                <div className="flex justify-center">
+                  <Loading
+                    width="w-[80px]"
+                    border="border-[4px]"
+                    height="h-[80px]"
+                  />
+                </div>
+              ) : (
+                <>
+                  <img src="../src/assets/svg/image.svg" alt="" />
+                  <span className="text-[#94A3B8] text-sm">
+                    {isUpload ? "Thêm ảnh" : "Chọn ảnh"}
+                  </span>
+                </>
+              )}
             </label>
             {errors.images && (
-              <p className="error top-full absolute">{errors.images}</p>
+              <p className="top-full absolute error">{errors.images}</p>
             )}
           </div>
         </div>
@@ -278,7 +325,7 @@ function Report() {
 
         {/* USER INFO */}
         <div>
-          <h2 className="text-3xl font-extrabold text-center mb-4">
+          <h2 className="mb-4 font-extrabold text-3xl text-center">
             Xác thực người tố cáo
           </h2>
           <div className="form__group-wrap">
@@ -351,7 +398,7 @@ function Report() {
               </label>
             </div>
           </div>
-          <button type="submit" className="btn mx-auto block mt-10">
+          <button type="submit" className="block mx-auto mt-10 btn">
             Gửi tố cáo
           </button>
         </div>

@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { format } from "date-fns";
+
+import ModalDetail from "../components/Modal/ModalDetail";
+import { dateFormat } from "../components/dateFormat";
 
 interface HomeProps {
   warningList: { title: string; content: string }[];
@@ -9,13 +11,26 @@ interface HomeProps {
     bank__number: string;
     bank__name: string;
     content: string;
-    user_name: string;
-    user_phone: string;
-    user_type: string;
+    user__name: string;
+    user__phone: string;
+    user__type: string;
     images: Array<string>;
+    date: string;
   }[];
   modalDetail: boolean;
   handleShowModalDetail: () => void;
+  selectedScammer: {
+    scammer__name: string;
+    scammer_phone: string;
+    bank__number: string;
+    bank__name: string;
+    content: string;
+    user__name: string;
+    user__phone: string;
+    user__type: string;
+    images: Array<string>;
+    date: string;
+  } | null;
 }
 
 const Home: React.FC<HomeProps> = ({
@@ -23,10 +38,17 @@ const Home: React.FC<HomeProps> = ({
   scammerList,
   handleShowModalDetail,
   modalDetail,
+  selectedScammer,
 }) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
-  const dateString = format(new Date(), "dd/MM/yyyy");
+  const todayData = scammerList.filter((user) => {
+    const userDate = new Date(user.date);
+    userDate.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return userDate.getTime() === today.getTime();
+  });
 
   const handleShowDownDrop = (index: number) => {
     setActiveIndex(activeIndex === index ? null : index);
@@ -34,51 +56,53 @@ const Home: React.FC<HomeProps> = ({
   };
   return (
     <div className="relative">
-      <div className="img-fixed fixed top-[573px] left-1/2 right-0 transform -translate-x-1/2 -z-[1] flex items-center justify-center">
+      <div className="top-[573px] right-0 left-1/2 -z-[1] fixed img-fixed flex justify-center items-center -translate-x-1/2 transform">
         <img src="../src/assets/img/shield.png" alt="" />
         <img
-          className="absolute left-1/2  trasnform -translate-x-1/2"
+          className="left-1/2 absolute -translate-x-1/2 trasnform"
           src="../src/assets/img/stars.png"
           alt=""
         />
       </div>
       {/* CONTENT */}
-      <section className="max-w-[664px] w-full mx-auto mt-24">
-        <h1 className="content__heading text-[50px] font-extrabold text-center bg-clip-text text-transparent bg-gradient-to-tl from-[#D9C4AF] to-[#FFFFFF]">
+      <section className="mx-auto mt-24 w-full max-w-[664px]">
+        <h1 className="bg-clip-text bg-gradient-to-tl from-[#D9C4AF] to-[#FFFFFF] font-extrabold text-[50px] text-transparent text-center content__heading">
           KIỂM TRA & TỐ CÁO SCAMMER
         </h1>
-        <p className="text-[var(--subTextColor)] mt-5 text-center">
+        <p className="mt-5 text-[var(--subTextColor)] text-center">
           Website lưu trữ dữ liệu lừa đảo trên mạng xã hội mà không chịu bất kỳ
           hạn chế seach của một thuật toán nào trên Facebook
         </p>
-        <form className="max-w-[500px] p-[5px] w-full rounded-2xl bg-[var(--bgColor3)] border-[#FFFFFF1A] border mt-12 flex items-center mx-auto">
+        <form className="flex items-center bg-[var(--bgColor3)] mx-auto mt-12 p-[5px] border border-[#FFFFFF1A] rounded-2xl w-full max-w-[500px]">
           <input
             type="text"
-            className="flex-1 bg-transparent outline-none pl-[19px] pr-6 text-[var(--textcolor)]"
+            className="flex-1 bg-transparent pr-6 pl-[19px] outline-none text-[var(--textcolor)]"
             placeholder="Kiểm tra số tài khoản ngân hàng..."
           />
-          <button type="submit" className="btn flex-shrink-0">
+          <button type="submit" className="flex-shrink-0 btn">
             Tìm kiếm
           </button>
         </form>
       </section>
       {/* end CONTENT */}
 
-      <div className="max-w-[1100px] w-full  mx-auto mt-[138px] pb-[100px]">
+      <div className="mx-auto mt-[138px] pb-[100px] w-full max-w-[1100px]">
         {/* SCAMERS */}
-        <section className="rounded-2xl bg-[--bgColor4] border border-[#FFFFFF1A]">
+        <section className="bg-[--bgColor4] border border-[#FFFFFF1A] rounded-2xl">
           <div className="p-4 border-b border-b-[#FFFFFF1A] text-center">
-            <h2 className="text-3xl font-extrabold">Hôm nay {dateString}</h2>
-            <p className="text-[--subTextColor] mt-2">
-              CÓ {scammerList.length} CẢNH BÁO
+            <h2 className="font-extrabold text-3xl">
+              Hôm nay {dateFormat(new Date())}
+            </h2>
+            <p className="mt-2 text-[--subTextColor]">
+              CÓ {todayData.length} CẢNH BÁO
             </p>
           </div>
-          <ul className="py-[50px] px-[30px] grid grid-cols-3 gap-5">
-            {scammerList.map((scammer, index) => (
+          <ul className="gap-5 grid grid-cols-3 px-[30px] py-[50px]">
+            {todayData.map((scammer, index) => (
               <li
                 key={index}
                 className="scammer__item"
-                onClick={handleShowModalDetail}
+                onClick={() => handleShowModalDetail(scammer)}
               >
                 <img
                   src="../src/assets/img/avatar-1.png"
@@ -87,7 +111,10 @@ const Home: React.FC<HomeProps> = ({
                 />
                 <div>
                   <h3 className="scammer__name">{scammer.scammer__name}</h3>
-                  <div className="scammer__date">12/12/2024</div>
+                  <div className="scammer__date">
+                    {" "}
+                    #{index + 1} - {dateFormat(new Date(scammer.date))}
+                  </div>
                 </div>
               </li>
             ))}
@@ -97,10 +124,10 @@ const Home: React.FC<HomeProps> = ({
 
         {/* WARNING */}
         <section className="mt-[60px]">
-          <h2 className="text-3xl font-extrabold text-center">
+          <h2 className="font-extrabold text-3xl text-center">
             Một số kiểu lừa đảo online thường gặp
           </h2>
-          <ul className="mt-[30px] flex flex-col gap-5">
+          <ul className="flex flex-col gap-5 mt-[30px]">
             {warningList.map((warning, index) => (
               <li key={index} className="warning__item">
                 <div
@@ -130,110 +157,12 @@ const Home: React.FC<HomeProps> = ({
         {/* end WARNING */}
 
         {/* MODAL DETAIL SCAMMER */}
-        {modalDetail && (
-          <section className="modal fixed top-0 right-0 left-0 bottom-0 h-screen flex justify-center items-center isolate z-[100] animate-fadeIn">
-            <div
-              className={`modal__overlay absolute top-0 right-0 left-0 bottom-0 bg-[rgba(0,0,0,0.6)] -z-[1] ${
-                modalDetail ? "cursor-pointer" : ""
-              }`}
-              onClick={handleShowModalDetail}
-            ></div>
-            <div className="modal__content h-[800px] w-[623px]  bg-[var(--bgColor2)] rounded-2xl backdrop-blur-[70px] animate-fadeDown scale-[0.88]">
-              <div className="modal__header flex justify-between py-3 px-4 border-b border-b-[#FFFFFF1A] items-center h-[54px]">
-                <div className="modal__header-title font-semibold text-xl">
-                  Chi tiết tố cáo
-                </div>
-                <div
-                  className="w-[30px] h-[30px] rounded-full bg-[var(--bgColor3)] flex justify-center items-center cursor-pointer hover:opacity-50 transition-all ease-in duration-200"
-                  onClick={handleShowModalDetail}
-                >
-                  <img
-                    src="../src/assets/img/close_icon.png"
-                    alt="close_icon"
-                  />
-                </div>
-              </div>
-              <div className="modal__body py-2 px-4 h-[calc(800px-54px)] overflow-y-auto">
-                <div className="modal__group">
-                  <div className="modal__profile">
-                    <div>
-                      <img src="../src/assets/img/avatar-1.png" alt="" />
-                    </div>
-                    <div className="modal__info">
-                      <h4 className="modal__info-name">Hoang van phong</h4>
-                      <p className="modal__info-desc">
-                        #50 - Tố vào ngày 12/02/2024
-                      </p>
-                    </div>
-                  </div>
-                  <div className="modal__detail">
-                    <span className="modal__detail-title">Số điện thoại</span>
-                    <span className="modal__detail-text">0333990859</span>
-                  </div>
-                  <div className="modal__detail">
-                    <span className="modal__detail-title">Số tài khoản</span>
-                    <span className="modal__detail-text">342423443</span>
-                  </div>
-                  <div className="modal__detail">
-                    <span className="modal__detail-title">Nạn nhân</span>
-                    <span className="modal__detail-text">0356655665</span>
-                  </div>
-                </div>
-                <div className="modal__group">
-                  <div className="modal__profile">
-                    <div>
-                      <img src="../src/assets/img/avatar-2.png" alt="" />
-                    </div>
-                    <div className="modal__info">
-                      <h4 className="modal__info-name">Nguyễn văn B</h4>
-                      <p className="modal__info-desc">Người tố cáo</p>
-                    </div>
-                  </div>
-                  <div className="modal__detail">
-                    <span className="modal__detail-title">Trạng thái</span>
-                    <span className="modal__detail-text">Nạn nhân</span>
-                  </div>
-                  <div className="modal__detail">
-                    <span className="modal__detail-title">Liên hệ</span>
-                    <span className="modal__detail-text">0356655665</span>
-                  </div>
-                  <div className="modal__textarea mt-1">
-                    <span className="modal__detail-title">Nội dung tố cáo</span>
-                    <p>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                      ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                      Duis aute irure dolor in
-                    </p>
-                  </div>
-                  <div className="modal__img mt-[10px]">
-                    <span className="modal__detail-title">
-                      Hình ảnh liên quan
-                    </span>
-                    <div className="modal__preview-img grid grid-cols-3 gap-2 mt-2">
-                      <img
-                        src="https://images.unsplash.com/photo-1482434368596-fbd06cae4f89?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGNhdHxlbnwwfHwwfHx8MA%3D%3D"
-                        alt="image-scam"
-                      />
-                      <img
-                        src="https://images.unsplash.com/photo-1482434368596-fbd06cae4f89?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGNhdHxlbnwwfHwwfHx8MA%3D%3D"
-                        alt="image-scam"
-                      />
-                      <img
-                        src="https://images.unsplash.com/photo-1482434368596-fbd06cae4f89?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGNhdHxlbnwwfHwwfHx8MA%3D%3D"
-                        alt="image-scam"
-                      />
-                      <img
-                        src="https://images.unsplash.com/photo-1482434368596-fbd06cae4f89?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGNhdHxlbnwwfHwwfHx8MA%3D%3D"
-                        alt="image-scam"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
+        {modalDetail && selectedScammer && (
+          <ModalDetail
+            modalDetail={modalDetail}
+            handleShowModalDetail={handleShowModalDetail}
+            scammer={selectedScammer} // truyền scammer đã chọn
+          />
         )}
 
         {/* end MODAL DETAIL SCAMMER */}

@@ -7,9 +7,12 @@ function UserApp() {
     <div className="relative">
       <Header />
       <div>
-        <div className="effect-circle-1 w-[530px] h-[530px] rounded-full bg-[#1B1D30] fixed top-1 left-[-57px] opacity-40 supports-[backdrop-filter]:blur-[50px] -z-[10] "></div>
-        <div className="effect-circle-2 w-[530px] h-[530px] rounded-full bg-[#1B1D30] fixed bottom-1 right-[-57px] opacity-40 supports-[backdrop-filter]:blur-[50px] -z-[10]"></div>
+        <div className="top-1 left-[-57px] -z-[10] fixed bg-[#1B1D30] opacity-40 supports-[backdrop-filter]:blur-[50px] rounded-full w-[530px] h-[530px] effect-circle-1"></div>
+        <div className="right-[-57px] bottom-1 -z-[10] fixed bg-[#1B1D30] opacity-40 supports-[backdrop-filter]:blur-[50px] rounded-full w-[530px] h-[530px] effect-circle-2"></div>
         <Outlet />
+        <div className="right-3 bottom-3 z-[20] fixed bg-white shadow-lg px-5 py-3 rounded-xl font-semibold text-black cursor-pointer">
+          Tối
+        </div>
       </div>
       <Footer />
     </div>

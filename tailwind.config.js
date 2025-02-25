@@ -1,3 +1,5 @@
+import { transform } from 'typescript';
+
 /** @type {import('tailwindcss').Config} */
 export default {
     darkMode: ["class"],
@@ -48,14 +50,20 @@ export default {
   				to: {
   					height: '0'
   				}
-  			}
+  			},
+			'loading': {
+				to: {
+					transform: 'rotate(360deg)'
+				}
+			}
   		},
   		animation: {
   			fadeDown: 'fadeDown 0.25s ease-out',
   			fadeIn: 'fadeIn 0.25s ease-out',
   			fadeDown2: 'fadeDown2 0.3s linear',
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
+  			'accordion-up': 'accordion-up 0.2s ease-out',
+			loading: 'loading 1s linear infinite'
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
