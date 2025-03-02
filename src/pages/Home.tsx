@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import ModalDetail from "../components/Modal/ModalDetail";
+import ModalDetail from "../components/ModalDetail";
 import { dateFormat } from "../components/dateFormat";
 
 interface HomeProps {

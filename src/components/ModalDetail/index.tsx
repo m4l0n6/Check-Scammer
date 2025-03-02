@@ -1,4 +1,13 @@
 import { dateFormat } from "../dateFormat";
+import { useState, useEffect } from "react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 
 interface ModalDetailProps {
   scammer: {
@@ -22,11 +31,36 @@ function ModalDetail({
   handleShowModalDetail,
   scammer,
 }: ModalDetailProps) {
+  const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null);
+  const [showImg, setShowImg] = useState(false);
+  const [currentImg, setCurrentImg] = useState(0);
+  const handleShowImg = (index: number) => {
+    setCurrentImg(index);
+    setShowImg(true);
+  };
+
+  useEffect(() => {
+    if (showImg && carouselApi) {
+      carouselApi.scrollTo(currentImg, true);
+    }
+  });
+
+  const handleNext = () => {
+    if (carouselApi) {
+      carouselApi.scrollNext();
+    }
+  };
+
+  const handlePrev = () => {
+    if (carouselApi) {
+      carouselApi.scrollPrev();
+    }
+  };
   return (
     <>
       <section className="top-0 right-0 bottom-0 left-0 z-[100] isolate fixed flex justify-center items-center h-screen animate-fadeIn modal">
         <div
-          className={`modal__overlay absolute top-0 right-0 left-0 bottom-0 bg-[rgba(0,0,0,0.6)] -z-[1] ${
+          className={`modal__overlay absolute top-0 right-0 left-0 bottom-0 bg-[rgba(0,0,0,0.6)] -z-[2] ${
             modalDetail ? "cursor-pointer" : ""
           }`}
           onClick={handleShowModalDetail}
@@ -101,13 +135,52 @@ function ModalDetail({
                 <span className="modal__detail-title">Hình ảnh liên quan</span>
                 <div className="gap-2 grid grid-cols-3 mt-2 modal__preview-img">
                   {scammer.images.map((image, index) => (
-                    <img src={image} key={index} alt="image-scam" />
+                    <img
+                      src={image}
+                      key={index}
+                      alt="image-scam"
+                      onClick={() => {
+                        handleShowImg(index);
+                      }}
+                    />
                   ))}
                 </div>
               </div>
             </div>
           </div>
         </div>
+        {showImg && (
+          <div
+            className={`top-0 left-0 z-10 absolute flex justify-center items-center bg-[rgba(0,0,0,0.6)] w-full h-full animate-fadeIn`}
+          >
+            <div
+              className="top-4 right-4 absolute flex justify-center items-center bg-[var(--bgColor3)] hover:opacity-50 rounded-full w-[30px] h-[30px] transition-all duration-200 ease-in cursor-pointer"
+              onClick={() => setShowImg(false)}
+            >
+              <img src="../src/assets/img/close_icon.png" alt="close_icon" />
+            </div>
+            <Carousel className="flex w-full max-w-2xl" setApi={setCarouselApi}>
+              <CarouselContent
+                onClick={(event) => event.stopPropagation()}
+                className="items-center ml-4"
+              >
+                {scammer.images.map((image, index) => (
+                  <CarouselItem
+                    key={index}
+                    className={`items-center mx-auto pr-4 `}
+                  >
+                    <img src={image} alt="img" className="rounded-md" />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious
+                className="z-10 bg-black"
+                onClick={handlePrev}
+              />
+              <CarouselNext className="z-10 bg-black" onClick={handleNext} />
+            </Carousel>
+          </div>
+        )}
       </section>
     </>
   );

@@ -6,7 +6,7 @@ import Scammer from "./pages/Scammer";
 import About from "./pages/About";
 import Report from "./pages/Report";
 import axios from "axios";
-import { useHandleModal } from "./components/Modal/usehandleModal";
+import { useHandleModal } from "./components/ModalDetail/usehandleModal";
 
 function App() {
   const [warningList] = useState([
