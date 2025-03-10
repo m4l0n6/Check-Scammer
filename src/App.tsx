@@ -7,6 +7,7 @@ import About from "./pages/About";
 import Report from "./pages/Report";
 import axios from "axios";
 import { useHandleModal } from "./components/ModalDetail/usehandleModal";
+import Notfound from "./pages/Notfound";
 
 function App() {
   const [warningList] = useState([
@@ -27,16 +28,26 @@ function App() {
     },
   ]);
   const [scammerList, setScammerList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    axios
-      .get("https://67a8bcd26e9548e44fc1e141.mockapi.io/scammers")
-      .then((res) => {
+    async function getScammer() {
+      setIsLoading(true);
+      try {
+        setTimeout(() => setIsLoading(false), 1000);
+        const res = await axios.get(
+          "https://67a8bcd26e9548e44fc1e141.mockapi.io/scammers"
+        );
         setScammerList(res.data);
-      })
-      .catch((err) => console.log(err));
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    getScammer();
   }, []);
+
   const { modalDetail, handleShowModalDetail, selectedScammer } =
     useHandleModal();
+
   return (
     <Router>
       <Routes>
@@ -50,6 +61,7 @@ function App() {
                 modalDetail={modalDetail}
                 handleShowModalDetail={handleShowModalDetail}
                 selectedScammer={selectedScammer}
+                isLoading={isLoading}
               />
             }
           />
@@ -58,12 +70,16 @@ function App() {
             element={
               <Scammer
                 scammerList={scammerList}
+                modalDetail={modalDetail}
                 handleShowModalDetail={handleShowModalDetail}
+                selectedScammer={selectedScammer}
+                isLoading={isLoading}
               />
             }
           />
           <Route path="about" element={<About />} />
           <Route path="report" element={<Report />} />
+          <Route path="*" element={<Notfound />} />
         </Route>
       </Routes>
     </Router>

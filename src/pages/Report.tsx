@@ -281,7 +281,7 @@ function Report() {
                   className=""
                 />
               </div>
-              <img src={image} alt="" className="img__preview" />
+              <img src={image} alt="" className="img__preview" loading="lazy" />
             </div>
           ))}
           <div className="relative bg-[--bgColor3] rounded-lg w-full max-w-32 h-[114px]">

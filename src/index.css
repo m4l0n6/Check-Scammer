@@ -204,6 +204,16 @@ body::-webkit-scrollbar-thumb {
 
 /* end Report */
 
+.chatbot__content::-webkit-scrollbar {
+  @apply w-2;
+}
+.chatbot__content::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgb(0, 0, 0, 0.2);
+}
+.chatbot__content::-webkit-scrollbar-thumb {
+  background-image: #333;
+}
+
 @layer base {
   :root {
     --radius: 0.5rem;
@@ -259,8 +269,6 @@ body::-webkit-scrollbar-thumb {
     --chart-5: 340 75% 55%;
   }
 }
-
-
 
 @layer base {
   * {

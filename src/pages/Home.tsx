@@ -2,6 +2,9 @@ import { useState } from "react";
 
 import ModalDetail from "../components/ModalDetail";
 import { dateFormat } from "../components/dateFormat";
+import Nodata from "../components/Nodata";
+import Loading from "../components/Loading";
+import { handleSearch } from "../components/handleSearch";
 
 interface HomeProps {
   warningList: { title: string; content: string }[];
@@ -18,7 +21,20 @@ interface HomeProps {
     date: string;
   }[];
   modalDetail: boolean;
-  handleShowModalDetail: () => void;
+  handleShowModalDetail: (
+    scammer?: {
+      scammer__name: string;
+      scammer_phone: string;
+      bank__number: string;
+      bank__name: string;
+      content: string;
+      user__name: string;
+      user__phone: string;
+      user__type: string;
+      images: Array<string>;
+      date: string;
+    } | null
+  ) => void;
   selectedScammer: {
     scammer__name: string;
     scammer_phone: string;
@@ -31,6 +47,7 @@ interface HomeProps {
     images: Array<string>;
     date: string;
   } | null;
+  isLoading: boolean;
 }
 
 const Home: React.FC<HomeProps> = ({
@@ -39,6 +56,7 @@ const Home: React.FC<HomeProps> = ({
   handleShowModalDetail,
   modalDetail,
   selectedScammer,
+  isLoading,
 }) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
@@ -73,13 +91,20 @@ const Home: React.FC<HomeProps> = ({
           Website lưu trữ dữ liệu lừa đảo trên mạng xã hội mà không chịu bất kỳ
           hạn chế seach của một thuật toán nào trên Facebook
         </p>
-        <form className="flex items-center bg-[var(--bgColor3)] mx-auto mt-12 p-[5px] border border-[#FFFFFF1A] rounded-2xl w-full max-w-[500px]">
+        <form
+          className="flex items-center bg-[var(--bgColor3)] mx-auto mt-12 p-[5px] border border-[#FFFFFF1A] rounded-2xl w-full max-w-[500px]"
+          onSubmit={handleSearch}
+        >
           <input
             type="text"
             className="flex-1 bg-transparent pr-6 pl-[19px] outline-none text-[var(--textcolor)]"
             placeholder="Kiểm tra số tài khoản ngân hàng..."
           />
-          <button type="submit" className="flex-shrink-0 btn">
+          <button
+            type="submit"
+            className="flex-shrink-0 btn"
+            onSubmit={handleSearch}
+          >
             Tìm kiếm
           </button>
         </form>
@@ -97,28 +122,46 @@ const Home: React.FC<HomeProps> = ({
               CÓ {todayData.length} CẢNH BÁO
             </p>
           </div>
-          <ul className="gap-5 grid grid-cols-3 px-[30px] py-[50px]">
-            {todayData.map((scammer, index) => (
-              <li
-                key={index}
-                className="scammer__item"
-                onClick={() => handleShowModalDetail(scammer)}
-              >
-                <img
-                  src="../src/assets/img/avatar-1.png"
-                  alt="avatar"
-                  className=""
-                />
-                <div>
-                  <h3 className="scammer__name">{scammer.scammer__name}</h3>
-                  <div className="scammer__date">
-                    {" "}
-                    #{index + 1} - {dateFormat(new Date(scammer.date))}
-                  </div>
+          <div>
+            {todayData.length > 0 ? (
+              isLoading ? (
+                <div className="flex justify-center items-center p-10 w-full">
+                  <Loading
+                    width="w-[100px]"
+                    border="border-[8px]"
+                    height="h-[100px]"
+                  />
                 </div>
-              </li>
-            ))}
-          </ul>
+              ) : (
+                <ul className="gap-5 grid grid-cols-3 px-[30px] py-[50px]">
+                  {todayData.map((scammer, index) => (
+                    <li
+                      key={index}
+                      className="scammer__item"
+                      onClick={() => handleShowModalDetail(scammer)}
+                    >
+                      <img
+                        src="../src/assets/img/avatar-1.png"
+                        alt="avatar"
+                        className=""
+                      />
+                      <div>
+                        <h3 className="scammer__name">
+                          {scammer.scammer__name}
+                        </h3>
+                        <div className="scammer__date">
+                          {" "}
+                          #{index + 1} - {dateFormat(new Date(scammer.date))}
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )
+            ) : (
+              <Nodata />
+            )}
+          </div>
         </section>
         {/* end SCAMERS */}
 
@@ -161,7 +204,7 @@ const Home: React.FC<HomeProps> = ({
           <ModalDetail
             modalDetail={modalDetail}
             handleShowModalDetail={handleShowModalDetail}
-            scammer={selectedScammer} // truyền scammer đã chọn
+            scammer={selectedScammer}
           />
         )}
 

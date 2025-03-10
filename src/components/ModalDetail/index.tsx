@@ -169,15 +169,23 @@ function ModalDetail({
                     key={index}
                     className={`items-center mx-auto pr-4 `}
                   >
-                    <img src={image} alt="img" className="rounded-md" />
+                    <img
+                      src={image}
+                      alt="img"
+                      className="rounded-md"
+                      loading="lazy"
+                    />
                   </CarouselItem>
                 ))}
               </CarouselContent>
               <CarouselPrevious
-                className="z-10 bg-black"
+                className="z-10 bg-black scale-150"
                 onClick={handlePrev}
               />
-              <CarouselNext className="z-10 bg-black" onClick={handleNext} />
+              <CarouselNext
+                className="z-10 bg-black scale-150"
+                onClick={handleNext}
+              />
             </Carousel>
           </div>
         )}

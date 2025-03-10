@@ -1,13 +1,13 @@
 function Footer() {
   return (
     <>
-      <footer className="bg-[var(--bgColor2)] text-[var(--textcolor)] px-10 backdrop-blur-[70px] pt-5 pb-5 flex justify-between">
-        <div className="w-[360px] flex flex-col">
+      <footer className="flex justify-between bg-[var(--bgColor2)] backdrop-blur-[70px] px-10 pt-5 pb-5 text-[var(--textcolor)]">
+        <div className="flex flex-col w-[360px]">
           <a href="" className="flex items-center gap-2 font-semibold">
             <img src="../src/assets/img/logo.png" alt="" />
             CheckScam
           </a>
-          <div className="flex py-6 border-b-[1px] mb-6 font-bold">
+          <div className="flex mb-6 py-6 border-b-[1px] font-bold">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -25,25 +25,28 @@ function Footer() {
             </svg>
             <a href="https://github.com/m4l0n6">github/m4l0n6</a>
           </div>
-          <p className="text-sm text-[var(--subTextColor)]">
+          <p className="text-[var(--subTextColor)] text-sm">
             © 2025 Developed by m4l0n6. All Rights Reserved.
           </p>
         </div>
 
-        <div className="w-[200px]">
+        <div className="flex flex-col justify-center">
           <form action="" className="">
             <h2 className="font-bold text-lg">Contact with me</h2>
             <input
               type="text"
               name=""
               id=""
-              placeholder="Nhập email"
-              className="form__input mb-2"
+              placeholder="Enter email"
+              className="mr-4 mb-2 form__input"
             />
             <button type="submit" className="btn">
               Submit
             </button>
           </form>
+          <span className="text-[var(--subTextColor)] text-sm">
+            mahonglonghg12@gmail.com
+          </span>
         </div>
       </footer>
     </>

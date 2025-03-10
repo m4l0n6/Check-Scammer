@@ -18,8 +18,6 @@ const handleScroll = () => {
 function Header() {
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
-
-    // Cleanup sự kiện khi thành phần bị hủy
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
@@ -27,12 +25,12 @@ function Header() {
   return (
     <>
       <header className="fixed flex justify-between items-center bg-[var(--bgColor2)] backdrop-blur-[70px] mt-[25px] mr-[6%] ml-[6%] px-10 py-4 rounded-2xl header">
-        <a href="" className="flex items-end gap-[6px]">
+        <Link to="/" className="flex items-end gap-[6px]">
           <img src="../src/assets/img/logo.png" alt="logo" className="" />
           <span className="font-bold text-[18px] text-[var(--textcolor)]">
             Check scam
           </span>
-        </a>
+        </Link>
         <ul className="flex items-center gap-10 header-menu">
           <li className="header-menu-item">
             <Link to="/">Trang chủ</Link>
